@@ -116,16 +116,31 @@ func cleanString(input string) string {
 	return strings.TrimSpace(strings.Trim(input, string("\x00")))
 }
 
-type DLLLoaderError struct {
-	Err error
+type coreTempSDKError struct {
+	msg string
+	err error
 }
 
-func (d DLLLoaderError) Error() string {
-	dir, err := os.Getwd()
-	if err != nil {
+func (d coreTempSDKError) Error() string {
+	return d.msg
+}
+
+func wrapDLLError(err error) error {
+	dir, errWD := os.Getwd()
+	if errWD != nil {
 		dir = "."
 	}
-	return fmt.Sprintf("Make sure that '%s' is in directory '%s'. And the version is at least 1.2.0.0. You can download the DLL from '%s'. Error= %s", dllNameGetCoreTempInfoDLL, dir, dllSourceURIGetCoreTempInfoDLL, d.Err.Error())
+	return coreTempSDKError{
+		msg: fmt.Sprintf("Make sure that '%s' is in directory '%s'. And the version is at least 1.2.0.0. You can download the DLL from '%s'. Error= %s", dllNameGetCoreTempInfoDLL, dir, dllSourceURIGetCoreTempInfoDLL, err.Error()),
+		err: err,
+	}
+}
+
+func wrapCallError(err error) error {
+	return coreTempSDKError{
+		msg: fmt.Sprintf("The DLL was found but the call failed. Make sure Core Temp is running in the background. Error= %s", err.Error()),
+		err: err,
+	}
 }
 
 func getFnGetCoreTempInfo() (*windows.LazyProc, error) {
@@ -138,8 +153,7 @@ func getFnGetCoreTempInfo() (*windows.LazyProc, error) {
 	}
 	if err := globalFnGetCoreTempInfo.Find(); err != nil {
 		globalFnGetCoreTempInfo = nil
-
-		return nil, err
+		return nil, wrapDLLError(err)
 	}
 
 	return globalFnGetCoreTempInfo, nil
@@ -148,7 +162,7 @@ func getFnGetCoreTempInfo() (*windows.LazyProc, error) {
 func getCoreTempInfoAlt() (*coreTempSharedDataEx, error) {
 	fnGetCoreTempInfo, err := getFnGetCoreTempInfo()
 	if err != nil {
-		return nil, err
+		return nil, wrapCallError(err)
 	}
 
 	rawInfo := &coreTempSharedDataEx{}
