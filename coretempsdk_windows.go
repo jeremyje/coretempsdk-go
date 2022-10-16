@@ -18,8 +18,10 @@
 package coretempsdk
 
 import (
-	"log"
+	"fmt"
+	"os"
 	"strings"
+	"sync"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -57,14 +59,15 @@ type coreTempSharedDataEx struct {
 }
 
 var (
-	fnGetCoreTempInfo *windows.LazyProc
+	globalFnGetCoreTempInfo *windows.LazyProc
+	globalLock              sync.Mutex
 )
 
-func init() {
-	coretempDLL := windows.NewLazyDLL("GetCoreTempInfo.dll")
-	log.Printf("DLL: %s, %t", coretempDLL.Name, coretempDLL.System)
-	fnGetCoreTempInfo = coretempDLL.NewProc("fnGetCoreTempInfoAlt")
-}
+const (
+	dllNameGetCoreTempInfoDLL      = "GetCoreTempInfo.dll"
+	dllFuncfnGetCoreTempInfoAlt    = "fnGetCoreTempInfoAlt"
+	dllSourceURIGetCoreTempInfoDLL = "https://www.alcpu.com/CoreTemp/developers.html"
+)
 
 func GetCoreTempInfo() (*CoreTempInfo, error) {
 	rawInfo, err := getCoreTempInfoAlt()
@@ -113,8 +116,38 @@ func cleanString(input string) string {
 	return strings.TrimSpace(strings.Trim(input, string("\x00")))
 }
 
+type DLLLoaderError struct {
+	Err error
+}
+
+func (d DLLLoaderError) Error() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		dir = "."
+	}
+	return fmt.Sprintf("Make sure that '%s' is in directory '%s'. And the version is at least 1.2.0.0. You can download the DLL from '%s'. Error= %s", dllNameGetCoreTempInfoDLL, dir, dllSourceURIGetCoreTempInfoDLL, d.Err.Error())
+}
+
+func getFnGetCoreTempInfo() (*windows.LazyProc, error) {
+	globalLock.Lock()
+	defer globalLock.Unlock()
+
+	if globalFnGetCoreTempInfo == nil {
+		coretempDLL := windows.NewLazyDLL(dllNameGetCoreTempInfoDLL)
+		globalFnGetCoreTempInfo = coretempDLL.NewProc(dllFuncfnGetCoreTempInfoAlt)
+	}
+	if err := globalFnGetCoreTempInfo.Find(); err != nil {
+		globalFnGetCoreTempInfo = nil
+
+		return nil, err
+	}
+
+	return globalFnGetCoreTempInfo, nil
+}
+
 func getCoreTempInfoAlt() (*coreTempSharedDataEx, error) {
-	if err := fnGetCoreTempInfo.Find(); err != nil {
+	fnGetCoreTempInfo, err := getFnGetCoreTempInfo()
+	if err != nil {
 		return nil, err
 	}
 
