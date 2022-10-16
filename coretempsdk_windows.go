@@ -77,19 +77,29 @@ func GetCoreTempInfo() (*CoreTempInfo, error) {
 
 	coreCount := int(rawInfo.uiCoreCnt)
 
+	temps := float64List(rawInfo.fTemp[:], coreCount)
+
+	if byteToBool(rawInfo.ucFahrenheit) {
+		for i := 0; i < len(temps); i++ {
+			temps[i] = fToC(temps[i])
+		}
+	}
+
 	return &CoreTempInfo{
-		Load:         intList(rawInfo.uiLoad[:], coreCount),
-		TJMax:        intList(rawInfo.uiTjMax[:], int(rawInfo.uiCPUCnt)),
-		CoreCount:    coreCount,
-		Temperature:  float64List(rawInfo.fTemp[:], coreCount),
-		VID:          float64(rawInfo.fVID),
-		CPUSpeed:     float64(rawInfo.fCPUSpeed),
-		FSBSpeed:     float64(rawInfo.fFSBSpeed),
-		Multiplier:   float64(rawInfo.fMultiplier),
-		CPUName:      cleanString(string(rawInfo.sCPUName[:])),
-		Fahrenheit:   byteToBool(rawInfo.ucFahrenheit),
-		DeltaToTJMax: byteToBool(rawInfo.ucDeltaToTjMax),
+		Load:               intList(rawInfo.uiLoad[:], coreCount),
+		TJMax:              float64List(rawInfo.uiTjMax[:], int(rawInfo.uiCPUCnt)),
+		CoreCount:          coreCount,
+		TemperatureCelcius: temps,
+		VID:                float64(rawInfo.fVID),
+		CPUSpeed:           float64(rawInfo.fCPUSpeed),
+		FSBSpeed:           float64(rawInfo.fFSBSpeed),
+		Multiplier:         float64(rawInfo.fMultiplier),
+		CPUName:            cleanString(string(rawInfo.sCPUName[:])),
 	}, nil
+}
+
+func fToC(f float64) float64 {
+	return (f - 32) * 5 / 9
 }
 
 func byteToBool(b byte) bool {
@@ -104,7 +114,7 @@ func intList[T uint32 | int32](input []T, size int) []int {
 	return result
 }
 
-func float64List[T float32 | float64](input []T, size int) []float64 {
+func float64List[T float32 | float64 | int | uint32](input []T, size int) []float64 {
 	result := make([]float64, size)
 	for i := 0; i < int(size); i++ {
 		result[i] = float64(input[i])
