@@ -21,11 +21,11 @@ type CoreTempInfo struct {
 	TJMax        []int
 	CoreCount    int
 	CPUCount     int
-	Temperature  []float32
-	VID          float32
-	CPUSpeed     float32
-	FSBSpeed     float32
-	Multiplier   float32
+	Temperature  []float64
+	VID          float64
+	CPUSpeed     float64
+	FSBSpeed     float64
+	Multiplier   float64
 	CPUName      string
 	Fahrenheit   bool
 	DeltaToTJMax bool

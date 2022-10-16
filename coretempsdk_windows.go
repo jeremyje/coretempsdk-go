@@ -81,11 +81,11 @@ func GetCoreTempInfo() (*CoreTempInfo, error) {
 		Load:         intList(rawInfo.uiLoad[:], coreCount),
 		TJMax:        intList(rawInfo.uiTjMax[:], int(rawInfo.uiCPUCnt)),
 		CoreCount:    coreCount,
-		Temperature:  float32List(rawInfo.fTemp[:], coreCount),
-		VID:          rawInfo.fVID,
-		CPUSpeed:     rawInfo.fCPUSpeed,
-		FSBSpeed:     rawInfo.fFSBSpeed,
-		Multiplier:   rawInfo.fMultiplier,
+		Temperature:  float64List(rawInfo.fTemp[:], coreCount),
+		VID:          float64(rawInfo.fVID),
+		CPUSpeed:     float64(rawInfo.fCPUSpeed),
+		FSBSpeed:     float64(rawInfo.fFSBSpeed),
+		Multiplier:   float64(rawInfo.fMultiplier),
 		CPUName:      cleanString(string(rawInfo.sCPUName[:])),
 		Fahrenheit:   byteToBool(rawInfo.ucFahrenheit),
 		DeltaToTJMax: byteToBool(rawInfo.ucDeltaToTjMax),
@@ -104,10 +104,10 @@ func intList[T uint32 | int32](input []T, size int) []int {
 	return result
 }
 
-func float32List[T float32 | float64](input []T, size int) []float32 {
-	result := make([]float32, size)
+func float64List[T float32 | float64](input []T, size int) []float64 {
+	result := make([]float64, size)
 	for i := 0; i < int(size); i++ {
-		result[i] = float32(input[i])
+		result[i] = float64(input[i])
 	}
 	return result
 }
