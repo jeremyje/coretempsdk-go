@@ -17,6 +17,10 @@ SOURCE_DIRS=$(shell go list ./... | grep -v '/vendor/')
 
 all: example.exe
 
+fmt:
+	$(GO) fmt
+	$(GO) vet
+
 test:
 	$(GO) test -race ${SOURCE_DIRS} -cover
 
@@ -30,7 +34,7 @@ coverage.txt:
 	done
 
 example.exe: example/example.go
-	GOOS=windows GOARCH=amd64 go build -o $@ $<
+	GOOS=windows GOARCH=amd64 $(GO) build -o $@ $<
 
 clean:
 	rm -f coverage.txt
