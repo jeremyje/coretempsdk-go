@@ -17,16 +17,24 @@
 package coretempsdk
 
 type CoreTempInfo struct {
-	Load         []int
-	TJMax        []int
-	CoreCount    int
-	CPUCount     int
-	Temperature  []float64
-	VID          float64
-	CPUSpeed     float64
-	FSBSpeed     float64
-	Multiplier   float64
-	CPUName      string
-	Fahrenheit   bool
-	DeltaToTJMax bool
+	// Load as a percentage [0-100].
+	Load []int
+	// TJMax is the thermal junction maximum of the CPU. Once the temperature hits this limit the CPU will thermal throttle.
+	TJMax []float64
+	// CoreCount is the total number of cores across all CPUs on the machine.
+	CoreCount int
+	// CPUCount is the number of CPUs on the machine.
+	CPUCount int
+	// TemperatureCelcius is the temperature of each core expressed in Celcius.
+	TemperatureCelcius []float64
+	// VID is the voltage requested by the CPU.
+	VID float64
+	// CPUSpeed is the clock frequency of the CPU.
+	CPUSpeed float64
+	// FSBSpeed is the clock frequency of the front side bus.
+	FSBSpeed float64
+	// Multiplier is the front side bus multipler of the CPU.
+	Multiplier float64
+	// CPUName is the name and model of the CPU.
+	CPUName string
 }

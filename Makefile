@@ -33,6 +33,9 @@ coverage.txt:
 		fi; \
 	done
 
+run: example/example.go
+	$(GO) run example/example.go
+
 example.exe: example/example.go
 	GOOS=windows GOARCH=amd64 $(GO) build -o $@ $<
 

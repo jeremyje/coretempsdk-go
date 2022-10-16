@@ -28,5 +28,6 @@ func main() {
 		return
 	}
 	log.Printf("CPU: %s", info.CPUName)
-	log.Printf("Temperatures: %v", info.Temperature)
+	log.Printf("Temperatures: %v", info.TemperatureCelcius)
+	log.Printf("Full: %+v", info)
 }
