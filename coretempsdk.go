@@ -16,6 +16,8 @@
 // You can get the DLL from: https://www.alcpu.com/CoreTemp/main_data/CoreTempSDK.zip
 package coretempsdk
 
+import "time"
+
 // CoreTempInfo includes CPU and motherboard information about the host machine.
 type CoreTempInfo struct {
 	// Load as a percentage [0-100].
@@ -38,4 +40,6 @@ type CoreTempInfo struct {
 	Multiplier float64 `json:"multiplier" yaml:"multiplier"`
 	// CPUName is the name and model of the CPU.
 	CPUName string `json:"cpuName" yaml:"cpuName"`
+	// Timestamp is the time that the sample was taken.
+	Timestamp time.Time `json:"timestamp" yaml:"timestamp"`
 }

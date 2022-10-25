@@ -22,6 +22,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -96,6 +97,7 @@ func GetCoreTempInfo() (*CoreTempInfo, error) {
 		FSBSpeed:           float64(rawInfo.fFSBSpeed),
 		Multiplier:         float64(rawInfo.fMultiplier),
 		CPUName:            cleanString(string(rawInfo.sCPUName[:])),
+		Timestamp:          time.Now(),
 	}, nil
 }
 
