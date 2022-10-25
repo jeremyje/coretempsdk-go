@@ -89,6 +89,7 @@ func GetCoreTempInfo() (*CoreTempInfo, error) {
 		Load:               intList(rawInfo.uiLoad[:], coreCount),
 		TJMax:              float64List(rawInfo.uiTjMax[:], int(rawInfo.uiCPUCnt)),
 		CoreCount:          coreCount,
+		CPUCount:           int(rawInfo.uiCPUCnt),
 		TemperatureCelcius: temps,
 		VID:                float64(rawInfo.fVID),
 		CPUSpeed:           float64(rawInfo.fCPUSpeed),

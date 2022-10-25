@@ -16,6 +16,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/jeremyje/coretempsdk-go"
@@ -29,5 +30,10 @@ func main() {
 	}
 	log.Printf("CPU: %s", info.CPUName)
 	log.Printf("Temperatures: %v", info.TemperatureCelcius)
-	log.Printf("Full: %+v", info)
+	data, err := json.Marshal(info)
+	if err != nil {
+		log.Printf("%+v", info)
+	} else {
+		log.Printf("%s", data)
+	}
 }
