@@ -16,25 +16,26 @@
 // You can get the DLL from: https://www.alcpu.com/CoreTemp/main_data/CoreTempSDK.zip
 package coretempsdk
 
+// CoreTempInfo includes CPU and motherboard information about the host machine.
 type CoreTempInfo struct {
 	// Load as a percentage [0-100].
-	Load []int
+	Load []int `json:"load" yaml:"load"`
 	// TJMax is the thermal junction maximum of the CPU. Once the temperature hits this limit the CPU will thermal throttle.
-	TJMax []float64
+	TJMax []float64 `json:"tjMax" yaml:"tjMax"`
 	// CoreCount is the total number of cores across all CPUs on the machine.
-	CoreCount int
+	CoreCount int `json:"coreCount" yaml:"coreCount"`
 	// CPUCount is the number of CPUs on the machine.
-	CPUCount int
+	CPUCount int `json:"cpuCount" yaml:"cpuCount"`
 	// TemperatureCelcius is the temperature of each core expressed in Celcius.
-	TemperatureCelcius []float64
+	TemperatureCelcius []float64 `json:"temperatureCelcius" yaml:"temperatureCelcius"`
 	// VID is the voltage requested by the CPU.
-	VID float64
+	VID float64 `json:"vid" yaml:"vid"`
 	// CPUSpeed is the clock frequency of the CPU.
-	CPUSpeed float64
+	CPUSpeed float64 `json:"cpuSpeed" yaml:"cpuSpeed"`
 	// FSBSpeed is the clock frequency of the front side bus.
-	FSBSpeed float64
+	FSBSpeed float64 `json:"fsbSpeed" yaml:"fsbSpeed"`
 	// Multiplier is the front side bus multipler of the CPU.
-	Multiplier float64
+	Multiplier float64 `json:"multiplier" yaml:"multiplier"`
 	// CPUName is the name and model of the CPU.
-	CPUName string
+	CPUName string `json:"cpuName" yaml:"cpuName"`
 }
